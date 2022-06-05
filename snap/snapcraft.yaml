@@ -1,0 +1,54 @@
+name: discoveryserver
+base: core20
+version: '0.1'
+summary: Etcd Discovery Server
+description: |
+  The discovery server behind discovery.etcd.io - in a snap!
+
+grade: devel
+confinement: devmode
+
+apps:
+  etcd:
+    command: bin/etcd-wrapper.sh
+    daemon: simple
+    plugs:
+      - network-bind
+
+  discoveryserver:
+    command: bin/discoveryserver-wrapper.sh
+    daemon: simple
+    plugs:
+      - network-bind
+
+hooks:
+  install:
+    plugs:
+      - network
+
+parts:
+  etcd:
+    plugin: make
+    source-type: git
+    source: https://github.com/etcd-io/etcd.git
+    source-branch: 'release-3.5'
+    make-parameters:
+      - build
+    build-snaps:
+      - go
+    override-build: |
+        make build
+        cp -r $SNAPCRAFT_PART_BUILD/bin $SNAPCRAFT_PART_INSTALL/
+
+  discoveryserver:
+    plugin: go
+    source-type: git
+    source: https://github.com/etcd-io/discoveryserver.git
+
+  snap-wrappers:
+    plugin: dump
+    source: .
+    stage:
+      - bin/etcd-wrapper.sh
+      - bin/discoveryserver-wrapper.sh
+

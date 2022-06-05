@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Get the address for the default route to 1.0.0.0. This will probably
+# fall apart in a more complex routing environment, but that's what the
+# config options are for.
+# TODO - IPv6
+IP_ADDR=$(ip route get 1 | grep -oP '(?<=src )[^ ]*')
+
+snapctl set listen.address=$IP_ADDR
+snapctl set listen.port=8087
+snapctl set discovery.host=$IP_ADDR
+
