@@ -5,8 +5,8 @@ summary: Etcd Discovery Server
 description: |
   The discovery server behind discovery.etcd.io - in a snap!
 
-grade: devel
-confinement: devmode
+grade: stable
+confinement: strict
 
 apps:
   etcd:
